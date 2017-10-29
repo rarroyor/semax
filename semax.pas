@@ -127,7 +127,9 @@ end;
 procedure InstallProcHook(form: TForm);
 begin
   if not Assigned(PrevProc) then
-    PrevProc:=TWndProc(Windows.GetWindowLongPtr(form.Handle, GWL_WNDPROC)); //, PtrInt(@DestroyWindowProc));
+     PrevProc := TWndProc({$ifdef cpu64} Windows.GetWindowLongPtr(Form.Handle, GWL_WNDPROC)
+                          {$else}        Windows.GetWindowLong(Form.Handle, GWL_WNDPROC)
+                          {$endif}); //, PtrInt(@DestroyWindowProc));                      
   SetWindowLong(form.Handle, GWL_WNDPROC, PtrUInt(@MinMaxProc));
 end;
 {$endif}
@@ -165,7 +167,7 @@ begin
   bnd.Right:=mr.right;
   bnd.Bottom:=mr.bottom;
   {$else}
-  Result:=GetWindowRect(AForm.Handle, bnd)>0;
+  GetWindowRect(AForm.Handle, bnd);
   {$endif}
 end;
 
